@@ -1,0 +1,22 @@
+{
+  "name": "Go gRPC tutorial",
+  "dockerComposeFile": ["../docker-compose.yaml"],
+  "service": "go",
+  "workspaceFolder": "/app",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "fish",
+        "[go]": {
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "golang.go"
+        },
+        "gopls": {
+          "formatting.gofumpt": true,
+          "ui.semanticTokens": true
+        }
+      },
+      "extensions": ["golang.go", "task.vscode-task"]
+    }
+  }
+}

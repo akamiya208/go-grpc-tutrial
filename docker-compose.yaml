@@ -1,0 +1,39 @@
+services:
+  go: &go
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    depends_on: # see: https://docs.docker.com/compose/startup-order/
+      mysql:
+        condition: service_healthy
+        restart: true
+    volumes:
+      - .:/app
+    tty: true
+    ports:
+      - "8080:8080"
+
+  mysql: &mysql
+    image: mysql:8
+    volumes:
+      - go_grpc_tutrial_mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_ROOT_PASSWORD: qoyCZ1ZgyqXpcZkomOCGWtzBFAeVXIZKGJ5MSwDwjF6awM5v9V9epDkSSDWb4qax
+      MYSQL_USER: local
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: go_grpc_tutrial
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -hlocalhost -uroot -p$MYSQL_ROOT_PASSWORD",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  go_grpc_tutrial_mysql_data:
