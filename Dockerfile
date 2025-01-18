@@ -8,4 +8,5 @@ RUN apt -y update && apt -y install protobuf-compiler clang-format
 RUN sh -c "$(curl -Ssf https://pkgx.sh)" \
     && pkgx install task \
     && pkgx install mysql.com \
-    && pkgx install fishshell.com
+    && pkgx install fishshell.com \
+    && pkgx install fullstory.com/grpcurl
