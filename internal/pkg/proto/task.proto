@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package app;
+package proto;
 
-option go_package = "github.com/akamiya208/go-grpc-tutrial/internal/app";
+option go_package = "github.com/akamiya208/go-grpc-tutrial/internal/pkg/proto";
 
 message GetTaskRequest { uint32 id = 1; }
 
