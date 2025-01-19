@@ -2,11 +2,12 @@ package server
 
 import (
 	"context"
-	"errors"
 
 	"github.com/akamiya208/go-grpc-tutrial/internal/pkg/models"
 	"github.com/akamiya208/go-grpc-tutrial/internal/pkg/mysql"
 	pb "github.com/akamiya208/go-grpc-tutrial/internal/pkg/proto"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type TaskServer struct {
@@ -21,7 +22,11 @@ func NewTaskServer(client mysql.IClient) *TaskServer {
 func (s *TaskServer) GetTask(ctx context.Context, req *pb.GetTaskRequest) (*pb.TaskResponse, error) {
 	task, err := s.mysqlClient.GetTask(uint(req.Id))
 	if err != nil {
-		return nil, err
+		if err.Error() == "record not found" {
+			return nil, status.Error(codes.NotFound, err.Error())
+		} else {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
 	}
 
 	return &pb.TaskResponse{
@@ -34,12 +39,12 @@ func (s *TaskServer) GetTask(ctx context.Context, req *pb.GetTaskRequest) (*pb.T
 func (s *TaskServer) GetTasks(ctx context.Context, req *pb.GetTasksRequest) (*pb.TaskResponses, error) {
 	name := req.Name
 	if name == "" {
-		return nil, errors.New("name is required")
+		return nil, status.Error(codes.InvalidArgument, "name is required")
 	}
 
 	tasks, err := s.mysqlClient.GetTasksByName(name)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	responses := make([]*pb.TaskResponse, len(tasks))
@@ -59,7 +64,7 @@ func (s *TaskServer) GetTasks(ctx context.Context, req *pb.GetTasksRequest) (*pb
 func (s *TaskServer) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb.TaskResponse, error) {
 	task := models.Task{Name: req.Name, Description: &req.Description}
 	if err := s.mysqlClient.CreateTask(&task); err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &pb.TaskResponse{
@@ -72,14 +77,18 @@ func (s *TaskServer) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) 
 func (s *TaskServer) UpdateTask(ctx context.Context, req *pb.UpdateTaskRequest) (*pb.TaskResponse, error) {
 	task, err := s.mysqlClient.GetTask(uint(req.Id))
 	if err != nil {
-		return nil, err
+		if err.Error() == "record not found" {
+			return nil, status.Error(codes.NotFound, err.Error())
+		} else {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
 	}
 
 	task.Name = req.Name
 	task.Description = &req.Description
 
 	if err := s.mysqlClient.UpdateTask(&task); err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &pb.TaskResponse{
@@ -92,11 +101,15 @@ func (s *TaskServer) UpdateTask(ctx context.Context, req *pb.UpdateTaskRequest) 
 func (s *TaskServer) DeleteTask(ctx context.Context, req *pb.DeleteTaskRequest) (*pb.TaskResponse, error) {
 	task, err := s.mysqlClient.GetTask(uint(req.Id))
 	if err != nil {
-		return nil, err
+		if err.Error() == "record not found" {
+			return nil, status.Error(codes.NotFound, err.Error())
+		} else {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
 	}
 
 	if err := s.mysqlClient.DeleteTask(&task); err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &pb.TaskResponse{

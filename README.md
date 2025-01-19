@@ -40,6 +40,11 @@ $ grpcurl -plaintext -d '{"id": 1}' localhost:8080 proto.TaskService/DeleteTask
 
 $ grpcurl -plaintext -d '{"id": 1}' localhost:8080 proto.TaskService/GetTask
 ERROR:
-  Code: Unknown
+  Code: NotFound
   Message: record not found
+
+$ grpcurl -plaintext -d '{"name": ""}' localhost:8080 proto.TaskService/GetTasks
+ERROR:
+  Code: InvalidArgument
+  Message: name is required
 ```
