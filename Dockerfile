@@ -4,9 +4,8 @@ ENV APP_DIR=/app
 WORKDIR ${APP_DIR}
 
 # Requirements are installed here.
-RUN apt -y update && apt -y install protobuf-compiler clang-format
+RUN apt -y update \
+    && apt -y install protobuf-compiler clang-format libc-dev libstdc++-10-dev libgcc-9-dev netbase libudev-dev ca-certificates default-mysql-client fish
 RUN sh -c "$(curl -Ssf https://pkgx.sh)" \
-    && pkgx install task \
-    && pkgx install mysql.com \
-    && pkgx install fishshell.com \
-    && pkgx install fullstory.com/grpcurl
+    && pkgm install task \
+    && pkgm install fullstory.com/grpcurl
