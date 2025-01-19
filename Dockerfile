@@ -1,6 +1,6 @@
 FROM golang:1.23-bullseye
 
-ENV APP_DIR /app
+ENV APP_DIR=/app
 WORKDIR ${APP_DIR}
 
 # Requirements are installed here.

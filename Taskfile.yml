@@ -25,7 +25,6 @@ tasks:
   format:
     desc: "Format code"
     cmds:
-      - swag fmt --dir ./cmd/app,./internal/app,./internal/pkg/dto
       - gofumpt -l -w .
 
   lint:
